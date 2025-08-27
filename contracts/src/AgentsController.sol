@@ -65,6 +65,11 @@ contract AgentController {
         uint256 agentId = nextId++;
         agents[agentId] = Agent(agentId, name, role, ipfsHash);
         agentIds[msg.sender] = agentId;
+        
+        // Emit the AgentRegistered event
+        string memory roleString = role == AgentRole.Agent ? "Agent" : "Chat";
+        emit AgentRegistered(agentId, msg.sender, name, roleString, ipfsHash);
+        
         return agentId;
     }
 
