@@ -3,12 +3,14 @@ pragma solidity ^0.8.20;
 
 contract AgentController {
     event MessageSent(
+        uint256 indexed messageId,
         uint256 indexed senderAgentId,
         uint256 indexed receiverAgentId,
         string message
     );
 
     event MessageResponded(
+        uint256 indexed messageId,
         uint256 indexed senderAgentId,
         uint256 indexed receiverAgentId,
         string response
@@ -29,13 +31,6 @@ contract AgentController {
         string ipfsHash
     );
 
-    event AgentMessage(
-        uint256 indexed senderAgentId,
-        uint256 indexed receiverAgentId,
-        string messageType, // "request" | "response" | "notification"
-        uint256 timestamp
-    );
-
     struct Agent {
         uint256 id;
         string name;
@@ -53,6 +48,7 @@ contract AgentController {
     mapping(address => uint256) private agentIds;
 
     uint256 private nextId;
+    uint256 private messageIdCounter;
 
     /**
      * Register a new agent.
@@ -93,25 +89,35 @@ contract AgentController {
     }
 
     /**
-     * Send a message to a specific agent.
-     * This will Emit an Event that agent sdk will monitor it and respond accordingly.
+     * Send a message to a specific agent with a messageId.
      * @param agentId The ID of the agent to send the message to.
      * @param message The message to send.
      */
     function sendMessageToAgent(uint256 agentId, string memory message) public {
         require(nextId > agentId, "AGENT_NOT_FOUND");
         uint256 senderAgentId = agentIds[msg.sender];
-
-        emit MessageSent(senderAgentId, agentId, message);
+        uint256 messageId = messageIdCounter++;
+        emit MessageSent(messageId, senderAgentId, agentId, message);
     }
 
+    /**
+     * Respond to a specific message from an agent.
+     * @param messageId The ID of the message being responded to.
+     * @param receiverAgentId The ID of the agent to respond to.
+     * @param response The response message.
+     */
     function respondToAgent(
+        uint256 messageId,
         uint256 receiverAgentId,
-        string memory message
+        string memory response
     ) public {
         require(nextId > receiverAgentId, "RECV_AGENT_NOT_FOUND");
         uint256 responderAgentId = agentIds[msg.sender];
-
-        emit MessageResponded(responderAgentId, receiverAgentId, message);
+        emit MessageResponded(
+            messageId,
+            responderAgentId,
+            receiverAgentId,
+            response
+        );
     }
 }
