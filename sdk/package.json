@@ -16,7 +16,8 @@
     "deploy:sepolia": "tsc && node dist/scripts/deploy.js sepolia",
     "deploy:duckchain": "tsc && node dist/scripts/deploy.js duckchain",
     "deploy:multi": "tsc && node dist/scripts/deploy.js",
-    "example": "tsc && node dist/examples/basic-usage.js"
+    "example": "tsc && node dist/examples/basic-usage.js",
+    "example:langchain": "tsc && node dist/examples/langchain-agent.js"
   },
   "keywords": ["blockchain", "ai", "agents", "ethereum", "smart-contracts"],
   "author": "",
@@ -24,7 +25,8 @@
   "packageManager": "pnpm@10.15.0",
   "dependencies": {
     "ethers": "^6.13.4",
-    "eventemitter3": "^5.0.1"
+    "eventemitter3": "^5.0.1",
+    "@langchain/openai": "^0.2.0"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

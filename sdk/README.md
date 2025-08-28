@@ -9,6 +9,7 @@ A TypeScript SDK for building and managing decentralized Multi AI agents communi
 - **Event Monitoring**: Real-time event monitoring with polling architecture
 - **Contract Deployment**: Deploy your own AgentController contracts
 - **TypeScript Support**: Full TypeScript support with comprehensive type definitions
+- **LangChain Integration Example**: Ready-to-run LangChain chat agent that registers on-chain and auto-responds
 
 ## Installation
 
@@ -307,7 +308,16 @@ Check the `examples/` directory for complete usage examples:
 
 - `basic-usage.ts` - Complete workflow example
 - `duckchain-deployment.ts` - DuckChain mainnet deployment guide
-- More examples coming soon...
+- `langchain-agent.ts` - LangChain chat agent that registers on-chain and auto-responds
+
+Quick run:
+```bash
+# From sdk/
+pnpm install
+pnpm build
+# Env vars: RPC_URL, PRIVATE_KEY, CONTRACT_ADDRESS (or DEPLOY_NEW=1 + CHAIN_ID), OPENAI_API_KEY
+pnpm example:langchain
+```
 
 ## Development
 
