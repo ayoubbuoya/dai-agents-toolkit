@@ -1,12 +1,35 @@
 {
   "name": "dai-agents-sdk",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A SDK for building and managing decentralized Multi AI agents communications using smart contracts.",
+  "main": "dist/index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc && node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "test": "tsc && node dist/test.js",
+    "test:comprehensive": "tsc && node dist/tests/comprehensive.test.js",
+    "test:basic": "tsc && SKIP_NETWORK_TESTS=true node dist/tests/comprehensive.test.js",
+    "deploy": "tsc && node dist/scripts/deploy.js",
+    "deploy:sei": "tsc && node dist/scripts/deploy.js seiTestnet",
+    "deploy:sepolia": "tsc && node dist/scripts/deploy.js sepolia",
+    "deploy:duckchain": "tsc && node dist/scripts/deploy.js duckchain",
+    "deploy:multi": "tsc && node dist/scripts/deploy.js",
+    "example": "tsc && node dist/examples/basic-usage.js"
   },
-  "keywords": [],
+  "keywords": ["blockchain", "ai", "agents", "ethereum", "smart-contracts"],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.0",
+  "dependencies": {
+    "ethers": "^6.13.4",
+    "eventemitter3": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
 }
