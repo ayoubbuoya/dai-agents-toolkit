@@ -7,12 +7,17 @@
   "scripts": {
     "start": "tsc && node dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "build": "tsc"
+    "build": "tsc", 
+    "test": "tsc && node dist/test.js"
   },
-  "keywords": [],
+  "keywords": ["blockchain", "ai", "agents", "ethereum", "smart-contracts"],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.15.0",
+  "dependencies": {
+    "ethers": "^6.13.4",
+    "eventemitter3": "^5.0.1"
+  },
   "devDependencies": {
     "@types/node": "^24.3.0",
     "ts-node": "^10.9.2",
