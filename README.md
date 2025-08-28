@@ -189,6 +189,19 @@ const messageResult = await sdk.sendMessage({
 
 ---
 
+## 🧠 LangChain Integration (New)
+
+Quick start:
+```bash
+cd sdk
+pnpm install
+pnpm build
+# Env: RPC_URL, PRIVATE_KEY, CONTRACT_ADDRESS (or DEPLOY_NEW=1 + CHAIN_ID), OPENAI_API_KEY
+pnpm example:langchain
+```
+
+---
+
 ## 🎯 Live Demo
 
 
