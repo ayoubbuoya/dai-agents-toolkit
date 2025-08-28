@@ -1,8 +1,8 @@
-import { 
-  Contract, 
-  ContractFactory, 
-  JsonRpcProvider, 
-  Wallet, 
+import {
+  Contract,
+  ContractFactory,
+  JsonRpcProvider,
+  Wallet,
   Interface,
   TransactionResponse,
   ContractTransactionResponse
@@ -16,113 +16,15 @@ import {
   TransactionOptions,
   DeploymentConfig
 } from './types.js';
+import { loadContractArtifact } from './utils/contractLoader.js';
+
+// Load contract artifact
+const contractArtifact = loadContractArtifact();
 
 /**
- * AgentController ABI - extracted from the compiled contract
+ * AgentController ABI - loaded from contract artifact
  */
-export const AGENT_CONTROLLER_ABI = [
-  {
-    "type": "function",
-    "name": "countAgents",
-    "inputs": [],
-    "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "listAgents",
-    "inputs": [],
-    "outputs": [{
-      "name": "",
-      "type": "tuple[]",
-      "internalType": "struct AgentController.Agent[]",
-      "components": [
-        {"name": "id", "type": "uint256", "internalType": "uint256"},
-        {"name": "name", "type": "string", "internalType": "string"},
-        {"name": "role", "type": "uint8", "internalType": "enum AgentController.AgentRole"},
-        {"name": "ipfsHash", "type": "string", "internalType": "string"}
-      ]
-    }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "registerAgent",
-    "inputs": [
-      {"name": "name", "type": "string", "internalType": "string"},
-      {"name": "role", "type": "uint8", "internalType": "enum AgentController.AgentRole"},
-      {"name": "ipfsHash", "type": "string", "internalType": "string"}
-    ],
-    "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "respondToAgent",
-    "inputs": [
-      {"name": "messageId", "type": "uint256", "internalType": "uint256"},
-      {"name": "receiverAgentId", "type": "uint256", "internalType": "uint256"},
-      {"name": "response", "type": "string", "internalType": "string"}
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "sendMessageToAgent",
-    "inputs": [
-      {"name": "agentId", "type": "uint256", "internalType": "uint256"},
-      {"name": "message", "type": "string", "internalType": "string"}
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "event",
-    "name": "AgentRegistered",
-    "inputs": [
-      {"name": "agentId", "type": "uint256", "indexed": true, "internalType": "uint256"},
-      {"name": "agentAddress", "type": "address", "indexed": true, "internalType": "address"},
-      {"name": "name", "type": "string", "indexed": false, "internalType": "string"},
-      {"name": "role", "type": "string", "indexed": false, "internalType": "string"},
-      {"name": "ipfsHash", "type": "string", "indexed": false, "internalType": "string"}
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "AgentUpdated",
-    "inputs": [
-      {"name": "agentId", "type": "uint256", "indexed": true, "internalType": "uint256"},
-      {"name": "name", "type": "string", "indexed": false, "internalType": "string"},
-      {"name": "role", "type": "string", "indexed": false, "internalType": "string"},
-      {"name": "ipfsHash", "type": "string", "indexed": false, "internalType": "string"}
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "MessageResponded",
-    "inputs": [
-      {"name": "messageId", "type": "uint256", "indexed": true, "internalType": "uint256"},
-      {"name": "senderAgentId", "type": "uint256", "indexed": true, "internalType": "uint256"},
-      {"name": "receiverAgentId", "type": "uint256", "indexed": true, "internalType": "uint256"},
-      {"name": "response", "type": "string", "indexed": false, "internalType": "string"}
-    ],
-    "anonymous": false
-  },
-  {
-    "type": "event",
-    "name": "MessageSent",
-    "inputs": [
-      {"name": "messageId", "type": "uint256", "indexed": true, "internalType": "uint256"},
-      {"name": "senderAgentId", "type": "uint256", "indexed": true, "internalType": "uint256"},
-      {"name": "receiverAgentId", "type": "uint256", "indexed": true, "internalType": "uint256"},
-      {"name": "message", "type": "string", "indexed": false, "internalType": "string"}
-    ],
-    "anonymous": false
-  }
-];
+export const AGENT_CONTROLLER_ABI = contractArtifact.abi;
 
 /**
  * AgentController bytecode for deployment

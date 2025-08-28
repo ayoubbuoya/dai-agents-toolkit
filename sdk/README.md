@@ -28,13 +28,27 @@ pnpm add dai-agents-sdk
 import { AgentSDK, DeploymentConfig } from 'dai-agents-sdk';
 
 const deployConfig: DeploymentConfig = {
-  rpcUrl: 'http://localhost:8545',
+  rpcUrl: 'https://evm-rpc-testnet.sei-apis.com', // Sei Testnet
   privateKey: 'your-private-key',
-  chainId: 1337,
+  chainId: 713715,
 };
 
 const sdk = await AgentSDK.deployController(deployConfig);
 console.log('Contract deployed at:', await sdk.getContractAddress());
+```
+
+### 1.1. Deploy to DuckChain Mainnet
+
+```typescript
+import { NETWORKS } from 'dai-agents-sdk/config/networks';
+
+const deployConfig: DeploymentConfig = {
+  rpcUrl: NETWORKS.duckchain.rpcUrl,
+  privateKey: process.env.DUCKCHAIN_PRIVATE_KEY,
+  chainId: NETWORKS.duckchain.chainId,
+};
+
+const sdk = await AgentSDK.deployController(deployConfig);
 ```
 
 ### 2. Connect to Existing Contract
@@ -202,11 +216,97 @@ The SDK uses a polling-based event monitoring system that:
 - **MessageResponded**: When an agent responds to a message
 - **AgentUpdated**: When agent information is updated
 
+## Supported Networks
+
+The SDK comes with pre-configured network settings for easy deployment:
+
+### Mainnets
+- **Ethereum** - Chain ID: 1
+- **Polygon** - Chain ID: 137
+- **Arbitrum One** - Chain ID: 42161
+- **DuckChain** - Chain ID: 20241133 ⭐ *Primary target*
+
+### Testnets
+- **Sepolia** - Chain ID: 11155111
+- **Polygon Mumbai** - Chain ID: 80001
+- **Arbitrum Sepolia** - Chain ID: 421614
+- **Sei Testnet** - Chain ID: 713715 ⭐ *Recommended for testing*
+
+### Usage with Networks
+
+```typescript
+import { NETWORKS, getNetwork } from 'dai-agents-sdk/config/networks';
+
+// Use predefined network
+const seiTestnet = NETWORKS.seiTestnet;
+const sdk = await AgentSDK.deployController({
+  rpcUrl: seiTestnet.rpcUrl,
+  privateKey: 'your-private-key',
+  chainId: seiTestnet.chainId,
+});
+
+// Or get network by name
+const network = getNetwork('duckchain');
+```
+
+## Testing
+
+### Basic Tests (No Network Required)
+```bash
+npm run test:basic
+```
+
+### Comprehensive Tests (Requires Network Access)
+```bash
+# Set your test private key
+export TEST_PRIVATE_KEY="0x..."
+
+# Run full test suite
+npm run test:comprehensive
+
+# Test specific network
+npm run deploy:sei
+```
+
+### Environment Variables
+```bash
+# Required for mainnet deployments
+DUCKCHAIN_PRIVATE_KEY="0x..."
+
+# Optional for testing
+TEST_PRIVATE_KEY="0x..."
+SKIP_NETWORK_TESTS="true"  # Skip network-dependent tests
+```
+
+## Deployment Scripts
+
+### Deploy to Specific Networks
+```bash
+# Deploy to Sei Testnet
+npm run deploy:sei
+
+# Deploy to Sepolia
+npm run deploy:sepolia
+
+# Deploy to DuckChain Mainnet
+npm run deploy:duckchain
+
+# Deploy to custom network
+npm run deploy <network-name>
+```
+
+### Multi-Network Deployment
+```bash
+# Deploy to multiple testnets
+npm run deploy seiTestnet,sepolia,arbitrumSepolia
+```
+
 ## Examples
 
 Check the `examples/` directory for complete usage examples:
 
 - `basic-usage.ts` - Complete workflow example
+- `duckchain-deployment.ts` - DuckChain mainnet deployment guide
 - More examples coming soon...
 
 ## Development

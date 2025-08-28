@@ -2,7 +2,7 @@
 
 All notable changes to the DAI Agents SDK will be documented in this file.
 
-## [1.0.0] - 2024-08-28
+## [1.0.0] - 2025-08-28
 
 ### Added
 - Initial release of the DAI Agents SDK

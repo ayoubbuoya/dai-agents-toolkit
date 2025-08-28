@@ -7,8 +7,16 @@
   "scripts": {
     "start": "tsc && node dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "build": "tsc", 
-    "test": "tsc && node dist/test.js"
+    "build": "tsc",
+    "test": "tsc && node dist/test.js",
+    "test:comprehensive": "tsc && node dist/tests/comprehensive.test.js",
+    "test:basic": "tsc && SKIP_NETWORK_TESTS=true node dist/tests/comprehensive.test.js",
+    "deploy": "tsc && node dist/scripts/deploy.js",
+    "deploy:sei": "tsc && node dist/scripts/deploy.js seiTestnet",
+    "deploy:sepolia": "tsc && node dist/scripts/deploy.js sepolia",
+    "deploy:duckchain": "tsc && node dist/scripts/deploy.js duckchain",
+    "deploy:multi": "tsc && node dist/scripts/deploy.js",
+    "example": "tsc && node dist/examples/basic-usage.js"
   },
   "keywords": ["blockchain", "ai", "agents", "ethereum", "smart-contracts"],
   "author": "",
