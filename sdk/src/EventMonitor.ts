@@ -5,12 +5,16 @@ import {
   MessageSentEvent,
   MessageRespondedEvent,
   AgentUpdatedEvent,
+  AgentRatedEvent,
+  TrustScoreUpdatedEvent,
   EventFilterOptions,
   EventListenerOptions,
   AgentRegisteredCallback,
   MessageSentCallback,
   MessageRespondedCallback,
-  AgentUpdatedCallback
+  AgentUpdatedCallback,
+  AgentRatedCallback,
+  TrustScoreUpdatedCallback
 } from './types.js';
 import { AgentController } from './AgentController.js';
 
@@ -22,6 +26,8 @@ export enum EventNames {
   MESSAGE_SENT = 'MessageSent',
   MESSAGE_RESPONDED = 'MessageResponded',
   AGENT_UPDATED = 'AgentUpdated',
+  AGENT_RATED = 'AgentRated',
+  TRUST_SCORE_UPDATED = 'TrustScoreUpdated',
   ERROR = 'error'
 }
 
@@ -178,6 +184,27 @@ export class EventMonitor extends EventEmitter {
           };
           this.emit(EventNames.AGENT_UPDATED, agentUpdatedEvent);
           break;
+
+        case 'AgentRated':
+          const agentRatedEvent: AgentRatedEvent = {
+            agentId: parsedLog.args.agentId,
+            raterAgentId: parsedLog.args.raterAgentId,
+            positive: parsedLog.args.positive,
+            comment: parsedLog.args.comment,
+            ...baseEvent
+          };
+          this.emit(EventNames.AGENT_RATED, agentRatedEvent);
+          break;
+
+        case 'TrustScoreUpdated':
+          const trustScoreUpdatedEvent: TrustScoreUpdatedEvent = {
+            agentId: parsedLog.args.agentId,
+            newTrustScore: parsedLog.args.newTrustScore,
+            totalInteractions: parsedLog.args.totalInteractions,
+            ...baseEvent
+          };
+          this.emit(EventNames.TRUST_SCORE_UPDATED, trustScoreUpdatedEvent);
+          break;
       }
     } catch (error) {
       this.emit(EventNames.ERROR, error);
@@ -192,6 +219,8 @@ export class EventMonitor extends EventEmitter {
     messageSent: MessageSentEvent[];
     messageResponded: MessageRespondedEvent[];
     agentUpdated: AgentUpdatedEvent[];
+    agentRated: AgentRatedEvent[];
+    trustScoreUpdated: TrustScoreUpdatedEvent[];
   }> {
     const fromBlock = options.fromBlock || 0;
     const toBlock = options.toBlock || 'latest';
@@ -208,7 +237,9 @@ export class EventMonitor extends EventEmitter {
       agentRegistered: [] as AgentRegisteredEvent[],
       messageSent: [] as MessageSentEvent[],
       messageResponded: [] as MessageRespondedEvent[],
-      agentUpdated: [] as AgentUpdatedEvent[]
+      agentUpdated: [] as AgentUpdatedEvent[],
+      agentRated: [] as AgentRatedEvent[],
+      trustScoreUpdated: [] as TrustScoreUpdatedEvent[]
     };
 
     for (const log of logs) {
@@ -274,6 +305,29 @@ export class EventMonitor extends EventEmitter {
               });
             }
             break;
+
+          case 'AgentRated':
+            if (!options.agentId || parsedLog.args.agentId === options.agentId) {
+              events.agentRated.push({
+                agentId: parsedLog.args.agentId,
+                raterAgentId: parsedLog.args.raterAgentId,
+                positive: parsedLog.args.positive,
+                comment: parsedLog.args.comment,
+                ...baseEvent
+              });
+            }
+            break;
+
+          case 'TrustScoreUpdated':
+            if (!options.agentId || parsedLog.args.agentId === options.agentId) {
+              events.trustScoreUpdated.push({
+                agentId: parsedLog.args.agentId,
+                newTrustScore: parsedLog.args.newTrustScore,
+                totalInteractions: parsedLog.args.totalInteractions,
+                ...baseEvent
+              });
+            }
+            break;
         }
       } catch (error) {
         // Skip invalid logs
@@ -317,6 +371,14 @@ export class EventMonitor extends EventEmitter {
 
   onAgentUpdated(callback: AgentUpdatedCallback): void {
     this.on(EventNames.AGENT_UPDATED, callback);
+  }
+
+  onAgentRated(callback: AgentRatedCallback): void {
+    this.on(EventNames.AGENT_RATED, callback);
+  }
+
+  onTrustScoreUpdated(callback: TrustScoreUpdatedCallback): void {
+    this.on(EventNames.TRUST_SCORE_UPDATED, callback);
   }
 
   onError(callback: (error: Error) => void): void {

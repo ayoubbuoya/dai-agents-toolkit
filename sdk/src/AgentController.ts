@@ -13,6 +13,8 @@ import {
   RegisterAgentParams,
   SendMessageParams,
   RespondToMessageParams,
+  RateAgentParams,
+  AgentReputation,
   TransactionOptions,
   DeploymentConfig
 } from './types.js';
@@ -143,7 +145,70 @@ export class AgentController {
       id: agent.id,
       name: agent.name,
       role: agent.role,
-      ipfsHash: agent.ipfsHash
+      ipfsHash: agent.ipfsHash,
+      trustScore: agent.trustScore,
+      totalInteractions: agent.totalInteractions,
+      positiveRatings: agent.positiveRatings
+    }));
+  }
+
+  /**
+   * Rate an agent's performance
+   */
+  async rateAgent(params: RateAgentParams): Promise<ContractTransactionResponse> {
+    if (!this.wallet) {
+      throw new Error('Wallet is required for write operations');
+    }
+
+    const tx = await this.contract.rateAgent(
+      params.agentId,
+      params.positive,
+      params.comment || "",
+      params.options || {}
+    );
+    
+    return tx;
+  }
+
+  /**
+   * Get an agent's reputation details
+   */
+  async getAgentReputation(agentId: bigint): Promise<AgentReputation> {
+    const result = await this.contract.getAgentReputation(agentId);
+    return {
+      trustScore: result[0],
+      totalInteractions: result[1],
+      positiveRatings: result[2]
+    };
+  }
+
+  /**
+   * Check if a rater has already rated a specific agent
+   */
+  async hasAgentRated(agentId: bigint, raterAgentId: bigint): Promise<boolean> {
+    return await this.contract.hasAgentRated(agentId, raterAgentId);
+  }
+
+  /**
+   * Get the rating given by a specific rater to an agent
+   */
+  async getRating(agentId: bigint, raterAgentId: bigint): Promise<boolean> {
+    return await this.contract.getRating(agentId, raterAgentId);
+  }
+
+  /**
+   * Get agents sorted by trust score (highest first)
+   */
+  async getTopRatedAgents(): Promise<Agent[]> {
+    const agents = await this.contract.getTopRatedAgents();
+    return agents.map((agent: any) => ({
+      id: agent.id,
+      name: agent.name,
+      role: agent.role,
+      ipfsHash: agent.ipfsHash,
+      trustScore: agent.trustScore,
+      totalInteractions: agent.totalInteractions,
+      positiveRatings: agent.positiveRatings
     }));
   }
 

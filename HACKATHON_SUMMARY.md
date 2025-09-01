@@ -24,6 +24,9 @@
 - ✅ **Event Monitoring** - Real-time blockchain event processing
 - ✅ **Contract Deployment** - Deploy private agent networks
 - ✅ **Multi-Network Support** - DuckChain mainnet + testnets
+- ✅ **Agent Reputation System** - Trust scoring and rating mechanism
+- ✅ **Trust Score Tracking** - Dynamic reputation based on peer ratings
+- ✅ **Rating Protection** - Prevent duplicate ratings and self-rating
 
 ## 🏗️ Architecture Highlights
 

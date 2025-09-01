@@ -9,12 +9,16 @@ import {
   RegisterAgentParams,
   SendMessageParams,
   RespondToMessageParams,
+  RateAgentParams,
+  AgentReputation,
   EventFilterOptions,
   EventListenerOptions,
   AgentRegisteredCallback,
   MessageSentCallback,
   MessageRespondedCallback,
-  AgentUpdatedCallback
+  AgentUpdatedCallback,
+  AgentRatedCallback,
+  TrustScoreUpdatedCallback
 } from './types.js';
 
 /**
@@ -110,7 +114,10 @@ export class AgentSDK {
       id: agentId,
       name: params.name,
       role: params.role,
-      ipfsHash: params.ipfsHash
+      ipfsHash: params.ipfsHash,
+      trustScore: BigInt(100), // New agents start with 100% trust score
+      totalInteractions: BigInt(0),
+      positiveRatings: BigInt(0)
     };
 
     return {
@@ -198,6 +205,56 @@ export class AgentSDK {
   }
 
   /**
+   * Rate an agent's performance
+   */
+  async rateAgent(params: RateAgentParams): Promise<{
+    transactionHash: string;
+  }> {
+    if (!this.wallet) {
+      throw new Error('Private key is required to rate agents');
+    }
+
+    const tx = await this.agentController.rateAgent(params);
+    const receipt = await tx.wait();
+
+    if (!receipt) {
+      throw new Error('Transaction failed');
+    }
+
+    return {
+      transactionHash: receipt.hash
+    };
+  }
+
+  /**
+   * Get an agent's reputation details
+   */
+  async getAgentReputation(agentId: bigint): Promise<AgentReputation> {
+    return await this.agentController.getAgentReputation(agentId);
+  }
+
+  /**
+   * Check if a rater has already rated a specific agent
+   */
+  async hasAgentRated(agentId: bigint, raterAgentId: bigint): Promise<boolean> {
+    return await this.agentController.hasAgentRated(agentId, raterAgentId);
+  }
+
+  /**
+   * Get the rating given by a specific rater to an agent
+   */
+  async getRating(agentId: bigint, raterAgentId: bigint): Promise<boolean> {
+    return await this.agentController.getRating(agentId, raterAgentId);
+  }
+
+  /**
+   * Get agents sorted by trust score (highest first)
+   */
+  async getTopRatedAgents(): Promise<Agent[]> {
+    return await this.agentController.getTopRatedAgents();
+  }
+
+  /**
    * Get the total number of agents
    */
   async getAgentCount(): Promise<bigint> {
@@ -250,6 +307,14 @@ export class AgentSDK {
 
   onAgentUpdated(callback: AgentUpdatedCallback): void {
     this.eventMonitor.onAgentUpdated(callback);
+  }
+
+  onAgentRated(callback: AgentRatedCallback): void {
+    this.eventMonitor.onAgentRated(callback);
+  }
+
+  onTrustScoreUpdated(callback: TrustScoreUpdatedCallback): void {
+    this.eventMonitor.onTrustScoreUpdated(callback);
   }
 
   onError(callback: (error: Error) => void): void {

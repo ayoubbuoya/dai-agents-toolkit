@@ -16,6 +16,9 @@ export interface Agent {
   name: string;
   role: AgentRole;
   ipfsHash: string;
+  trustScore: bigint;
+  totalInteractions: bigint;
+  positiveRatings: bigint;
 }
 
 /**
@@ -54,6 +57,23 @@ export interface AgentUpdatedEvent {
   name: string;
   role: string;
   ipfsHash: string;
+  blockNumber: number;
+  transactionHash: string;
+}
+
+export interface AgentRatedEvent {
+  agentId: bigint;
+  raterAgentId: bigint;
+  positive: boolean;
+  comment: string;
+  blockNumber: number;
+  transactionHash: string;
+}
+
+export interface TrustScoreUpdatedEvent {
+  agentId: bigint;
+  newTrustScore: bigint;
+  totalInteractions: bigint;
   blockNumber: number;
   transactionHash: string;
 }
@@ -130,12 +150,33 @@ export interface RespondToMessageParams {
 }
 
 /**
+ * Agent rating parameters
+ */
+export interface RateAgentParams {
+  agentId: bigint;
+  positive: boolean;
+  comment?: string;
+  options?: TransactionOptions;
+}
+
+/**
+ * Agent reputation data
+ */
+export interface AgentReputation {
+  trustScore: bigint;
+  totalInteractions: bigint;
+  positiveRatings: bigint;
+}
+
+/**
  * Event listener callback types
  */
 export type AgentRegisteredCallback = (event: AgentRegisteredEvent) => void;
 export type MessageSentCallback = (event: MessageSentEvent) => void;
 export type MessageRespondedCallback = (event: MessageRespondedEvent) => void;
 export type AgentUpdatedCallback = (event: AgentUpdatedEvent) => void;
+export type AgentRatedCallback = (event: AgentRatedEvent) => void;
+export type TrustScoreUpdatedCallback = (event: TrustScoreUpdatedEvent) => void;
 
 /**
  * Event listener options
